@@ -16,6 +16,7 @@ const rootRoutes = require('./routes/root')
 const authRoutes = require('./routes/authRoutes')
 const userRoutes = require('./routes/userRoutes')
 const postRoutes = require('./routes/postRoutes')
+const publicRoutes = require('./routes/publicRoutes')
 
 const PORT = process.env.PORT
 
@@ -38,6 +39,7 @@ app.use('/', rootRoutes) // Root Index Route
 app.use('/auth', authRoutes) // Auth Route
 app.use('/users', userRoutes) // Users Route
 app.use('/posts', postRoutes) // Posts Route
+app.use('/public', publicRoutes) // Public Routes
 
 app.use('*', (req, res) => { // 404 Not Found Route
     // Send error response code
