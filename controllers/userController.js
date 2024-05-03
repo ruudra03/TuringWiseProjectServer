@@ -20,10 +20,10 @@ const getAllUsers = async (req, res) => {
 
 // @desc Create New User
 // @route POST /users
-// @access Private
+// @access Private & Public
 const createNewUser = async (req, res) => {
     // Destructure request body
-    const { name, username, email, password, roles } = req.body
+    const { name, username, email, password } = req.body
 
     // Confirm Data
     if (!name || !username || !email || !password) {
@@ -44,9 +44,7 @@ const createNewUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10) // Using 10 salt rounds
 
     // Create & Store New User Object
-    const newUser = (!Array.isArray(roles) || !roles.length)
-        ? { name, username, email, 'password': hashedPassword }
-        : { name, username, email, 'password': hashedPassword, roles }
+    const newUser = { name, username, email, 'password': hashedPassword }
 
     const user = await User.create(newUser)
 
@@ -62,10 +60,10 @@ const createNewUser = async (req, res) => {
 // @access Private
 const updateUser = async (req, res) => {
     // Destructure request body
-    const { id, name, username, email, password, roles, active } = req.body
+    const { id, name, username, email, password, active } = req.body
 
     // Confirm Data (don't need to check for password everytime)
-    if (!id || !name || !username || !email || !Array.isArray(roles) || !roles.length || typeof active !== 'boolean') {
+    if (!id || !name || !username || !email || typeof active !== 'boolean') {
         return res.status(400).json({ message: 'Required fields are missing' })
     }
 
@@ -90,7 +88,6 @@ const updateUser = async (req, res) => {
     user.name = name
     user.username = username
     user.email = email
-    user.roles = roles
     user.active = active
 
     // If password is being updated
@@ -119,7 +116,7 @@ const deleteUser = async (req, res) => {
     const post = await Post.findOne({ user: id }).lean().exec()
 
     if (post) {
-        return res.status(400).json({ message: 'User has posts' })
+        return res.status(400).json({ message: 'Cannot delete user (user has published content)' })
     }
 
     const user = await User.findById(id).exec()

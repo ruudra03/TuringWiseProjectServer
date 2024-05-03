@@ -1,24 +1,24 @@
 const mongoose = require('mongoose')
 const AutoIncrement = require('mongoose-sequence')(mongoose)
 
-const postSchema = new mongoose.Schema(
+const commentSchema = new mongoose.Schema(
     {
         user: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
             ref: 'User'
         },
-        title: {
-            type: String,
+        commentedOn: {
+            type: mongoose.Schema.Types.ObjectId,
             required: true
         },
         body: {
             type: String,
             required: true
         },
-        tags: {
-            type: [String],
-            default: ['Post']
+        likes: {
+            type: Number,
+            default: 0
         },
         edited: {
             type: Boolean,
@@ -30,10 +30,10 @@ const postSchema = new mongoose.Schema(
     }
 )
 
-postSchema.plugin(AutoIncrement, {
-    inc_field: 'post',
-    id: 'postNums',
+commentSchema.plugin(AutoIncrement, {
+    inc_field: 'comment',
+    id: 'commentNums',
     start_seq: 1
 })
 
-module.exports = mongoose.model('Post', postSchema)
+module.exports = mongoose.model('Comment', commentSchema)

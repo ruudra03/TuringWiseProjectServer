@@ -25,7 +25,7 @@ const getAllPosts = async (req, res) => {
 const createNewPost = async (req, res) => {
     const { user, title, body, tags } = req.body
 
-    if (!user || !title || !body || !Array.isArray(tags) || !tags.length) {
+    if (!user || !title || !body) {
         return res.status(400).json({ message: 'Required fields are missing' })
     }
 
@@ -35,7 +35,10 @@ const createNewPost = async (req, res) => {
         return res.status(400).json({ message: 'No such user found' })
     }
 
-    const newPost = { user, title, body, tags }
+    const newPost = (!Array.isArray(tags) || !tags.length)
+        ? { user, title, body }
+        : { user, title, body, tags }
+
     const post = await Post.create(newPost)
 
     if (post) { // New Post Object is created
